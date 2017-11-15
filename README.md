@@ -1,0 +1,2 @@
+# MyWidgetSample
+My custom view.
