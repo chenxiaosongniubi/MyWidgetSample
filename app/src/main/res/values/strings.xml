@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyWidgetSample</string>
+    <string name="attachment_comment">Test no data attachment!</string>
+</resources>
