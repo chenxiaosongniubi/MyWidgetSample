@@ -9,7 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.yan.mywidget.ProgressButtonLayout;
+import com.yan.mywidgetsample.activity.IndexViewActivity;
+import com.yan.mywidgetsample.activity.ProgressButtonActivity;
 import com.yan.mywidgetsample.activity.ViewAttachmentTest;
 
 import java.util.ArrayList;
@@ -23,12 +27,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         RecyclerView mainRv = findViewById(R.id.main_rv);
         mainRv.setLayoutManager(new LinearLayoutManager(this));
+        mainRv.addItemDecoration(new DividerDecoration());
         mainRv.setAdapter(new MyAdapter(getClassList()));
     }
 
     private List<Class> getClassList() {
         List<Class> classList = new ArrayList<>();
         classList.add(ViewAttachmentTest.class);
+        classList.add(IndexViewActivity.class);
+        classList.add(ProgressButtonActivity.class);
         return classList;
     }
 
