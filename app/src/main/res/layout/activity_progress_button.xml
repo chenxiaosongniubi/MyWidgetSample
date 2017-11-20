@@ -13,6 +13,8 @@
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
         android:addStatesFromChildren="true"
+        app:background="@drawable/sc_btn"
+        app:cover="@drawable/ic_launcher_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -23,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/sc_btn"
+            android:background="@drawable/btn"
             android:text="enter another acitvity" />
 
         <ProgressBar
@@ -32,16 +34,4 @@
             android:layout_gravity="center_horizontal"
             android:translationZ="10dp" />
     </com.yan.mywidget.ProgressButtonLayout>
-
-    <ImageView
-        android:id="@+id/cover"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:src="@drawable/ic_cover"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
 </android.support.constraint.ConstraintLayout>

@@ -3,8 +3,9 @@ package com.yan.mywidget;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
-import android.os.Build;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -28,8 +28,10 @@ public class ProgressButtonLayout extends FrameLayout {
     private TextView button;
     private View progress;
     private ImageView cover;
+    private int bgResId;
     private int coverResId;
 
+    private Drawable buttonBg;
     private String buttonText;
     private int buttonWidth;
     private int progressWidth;
@@ -47,10 +49,19 @@ public class ProgressButtonLayout extends FrameLayout {
 
     public ProgressButtonLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init(context, attrs);
     }
 
     public ProgressButtonLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ProgressButtonLayout);
+        bgResId = ta.getResourceId(R.styleable.ProgressButtonLayout_background, R.drawable.sc_btn);
+        coverResId = ta.getResourceId(R.styleable.ProgressButtonLayout_cover, R.drawable.ic_cover);
+        ta.recycle();
     }
 
     @Override
@@ -63,6 +74,7 @@ public class ProgressButtonLayout extends FrameLayout {
                     View view = getChildAt(i);
                     if (view instanceof TextView) {
                         button = (TextView) view;
+                        buttonBg = button.getBackground();
                         buttonText = button.getText().toString();
                         buttonWidth = button.getMeasuredWidth();
                         button.setOnClickListener(new OnClickListener() {
@@ -83,6 +95,10 @@ public class ProgressButtonLayout extends FrameLayout {
         });
     }
 
+    public void setBgResId(int bgResId) {
+        this.bgResId = bgResId;
+    }
+
     public void setCoverResId(int coverResId) {
         this.coverResId = coverResId;
     }
@@ -92,24 +108,24 @@ public class ProgressButtonLayout extends FrameLayout {
         if (windowManager == null) {
             return;
         }
-        float density = getResources().getDisplayMetrics().density;
         float sh = getResources().getDisplayMetrics().heightPixels;
         int size = progressWidth;
-
         int[] location = new int[2];
         progress.getLocationInWindow(location);
         if (cover == null) {
             cover = new ImageView(getContext());
         }
+        Log.i(tag, location[0] + ":" + location[1]);
         FrameLayout frameLayout = new FrameLayout(getContext());
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size / 2, size / 2);
+        frameLayout.setBackgroundColor(0x44000000);
         cover.setLayoutParams(layoutParams);
         cover.setImageResource(coverResId);
-        cover.setX(location[0]);
-        cover.setY(location[1]);
+        cover.setX(location[0] + (progress.getMeasuredWidth() - cover.getMeasuredWidth()) / 4);
+        cover.setY(location[1] - (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
         frameLayout.addView(cover);
         windowManager.addView(frameLayout, getWindowLayoutParams());
-        cover.animate().setDuration(1000).scaleX(sh / size * 2).scaleY(sh / size * 2).setListener(new Animator.AnimatorListener() {
+        cover.animate().setDuration(1000).scaleX(sh / size * 4).scaleY(sh / size * 4).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -118,12 +134,6 @@ public class ProgressButtonLayout extends FrameLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 coverCallback.onCovered();
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        cover.animate().setDuration(1000).scaleX(0).scaleY(0).setListener(null).start();
-                    }
-                }, 2000);
             }
 
             @Override
@@ -144,7 +154,7 @@ public class ProgressButtonLayout extends FrameLayout {
 
     private static WindowManager.LayoutParams getWindowLayoutParams() {
         WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
-        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         wmParams.format = PixelFormat.RGBA_8888;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         wmParams.gravity = Gravity.START | Gravity.TOP;
@@ -153,6 +163,32 @@ public class ProgressButtonLayout extends FrameLayout {
         wmParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
         wmParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         return wmParams;
+    }
+
+    public void showProgress() {
+        if (isProgressShowing) {
+            return;
+        }
+        isProgressShowing = true;
+        button.setEnabled(false);
+        button.setBackgroundResource(bgResId);
+        ValueAnimator valueAnimator = new ValueAnimator();
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setDuration(500);
+        valueAnimator.setIntValues(buttonWidth, progressWidth);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                button.getLayoutParams().width = value;
+                button.requestLayout();
+                if (value == progressWidth) {
+                    progress.setVisibility(VISIBLE);
+                }
+            }
+        });
+        button.setText(null);
+        valueAnimator.start();
     }
 
     public void hideProgress() {
@@ -170,37 +206,13 @@ public class ProgressButtonLayout extends FrameLayout {
                 button.getLayoutParams().width = value;
                 button.requestLayout();
                 if (value == buttonWidth) {
+                    button.setBackgroundDrawable(buttonBg);
                     button.setText(buttonText);
                     button.setEnabled(true);
                 }
             }
         });
         progress.setVisibility(GONE);
-        valueAnimator.start();
-    }
-
-    public void showProgress() {
-        if (isProgressShowing) {
-            return;
-        }
-        isProgressShowing = true;
-        button.setEnabled(false);
-        ValueAnimator valueAnimator = new ValueAnimator();
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.setDuration(500);
-        valueAnimator.setIntValues(buttonWidth, progressWidth);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int value = (int) animation.getAnimatedValue();
-                button.getLayoutParams().width = value;
-                button.requestLayout();
-                if (value == progressWidth) {
-                    progress.setVisibility(VISIBLE);
-                }
-            }
-        });
-        button.setText(null);
         valueAnimator.start();
     }
 

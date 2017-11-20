@@ -28,7 +28,7 @@ public class IndexViewActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-            getWindow().setEnterTransition(new Explode());
+            getWindow().setEnterTransition(new Fade());
         }
         setContentView(R.layout.activity_index_view);
         rv = findViewById(R.id.rv);
