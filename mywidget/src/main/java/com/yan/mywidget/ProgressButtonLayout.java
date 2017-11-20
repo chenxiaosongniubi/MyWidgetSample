@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +26,13 @@ public class ProgressButtonLayout extends FrameLayout {
     private final String tag = ProgressButtonLayout.class.getSimpleName();
     private TextView button;
     private View progress;
-    private ImageView cover;
+    private FrameLayout coverLayout;
     private int bgResId;
     private int coverResId;
 
+    private int buttonWidth;
     private Drawable buttonBg;
     private String buttonText;
-    //    private int buttonWidth;
-//    private int progressWidth;
     private boolean isProgressShowing;
 
     public ProgressButtonLayout(@NonNull Context context) {
@@ -65,20 +63,11 @@ public class ProgressButtonLayout extends FrameLayout {
             View view = getChildAt(i);
             if (view instanceof TextView) {
                 button = (TextView) view;
-                buttonBg = button.getBackground();
-                buttonText = button.getText().toString();
             } else {
                 progress = view;
                 progress.setVisibility(INVISIBLE);
             }
         }
-        /*post(new Runnable() {
-            @Override
-            public void run() {
-                buttonWidth = button.getMeasuredWidth();
-                progressWidth = progress.getMeasuredWidth();
-            }
-        });*/
     }
 
     public TextView getButton() {
@@ -97,33 +86,38 @@ public class ProgressButtonLayout extends FrameLayout {
         this.coverResId = coverResId;
     }
 
-    public void showCover(CoverCallback coverCallback) {
-        showCover(800, coverCallback);
+    public void showCover(View rootView, CoverCallback coverCallback) {
+        showCover((ViewGroup) rootView, 800, coverCallback);
     }
 
-    public void showCover(int duration, final CoverCallback coverCallback) {
-        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        if (windowManager == null) {
-            return;
+    public void hideCover() {
+        coverLayout.setVisibility(GONE);
+    }
+
+    public void removeCover(View rootView) {
+        ViewGroup parent = (ViewGroup) rootView;
+        if (coverLayout != null && coverLayout.getParent() != null) {
+            parent.removeView(coverLayout);
         }
+    }
+
+    public void showCover(final View rootView, int duration, final CoverCallback coverCallback) {
+        removeCover(rootView);
+        ViewGroup parent = (ViewGroup) rootView;
         float sh = getResources().getDisplayMetrics().heightPixels;
         int pw = progress.getMeasuredWidth();
         int ph = progress.getMeasuredHeight();
         int[] location = new int[2];
         progress.getLocationInWindow(location);
-        if (cover == null) {
-            cover = new ImageView(getContext());
-        }
-        Log.i(tag, location[0] + ":" + location[1]);
-        FrameLayout frameLayout = new FrameLayout(getContext());
+        coverLayout = new FrameLayout(getContext());
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(pw / 2, ph / 2);
-        frameLayout.setBackgroundColor(0x44000000);
+        ImageView cover = new ImageView(getContext());
         cover.setLayoutParams(layoutParams);
         cover.setImageResource(coverResId);
         cover.setX(location[0] + (progress.getMeasuredWidth() - cover.getMeasuredWidth()) / 4);
-        cover.setY(location[1] - (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
-        frameLayout.addView(cover);
-        windowManager.addView(frameLayout, getWindowLayoutParams());
+        cover.setY(location[1] + (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
+        coverLayout.addView(cover);
+        parent.addView(coverLayout, getWindowLayoutParams());
         cover.animate().setDuration(800).scaleX(sh / pw * 4).scaleY(sh / ph * 4).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -133,6 +127,12 @@ public class ProgressButtonLayout extends FrameLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 coverCallback.onCovered();
+                coverLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        removeCover(rootView);
+                    }
+                }, 500);
             }
 
             @Override
@@ -169,9 +169,14 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = true;
+
+        final int bw = button.getMeasuredWidth();
+        buttonWidth = bw;
+        buttonText = button.getText().toString();
+        buttonBg = button.getBackground();
+
         button.setEnabled(false);
         button.setBackgroundResource(bgResId);
-        final int bw = button.getMeasuredWidth();
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setInterpolator(new LinearInterpolator());
@@ -192,6 +197,16 @@ public class ProgressButtonLayout extends FrameLayout {
         valueAnimator.start();
     }
 
+    public void hideProgressImmediately() {
+        isProgressShowing = false;
+        button.getLayoutParams().width = buttonWidth;
+        button.requestLayout();
+        button.setBackgroundDrawable(buttonBg);
+        button.setText(buttonText);
+        button.setEnabled(true);
+        progress.setVisibility(GONE);
+    }
+
     public void hideProgress() {
         hideProgress(500);
     }
@@ -201,7 +216,7 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = false;
-        final int bw = button.getMeasuredWidth();
+        final int bw = buttonWidth;
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(duration);

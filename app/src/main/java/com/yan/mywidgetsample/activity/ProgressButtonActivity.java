@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 
 import com.yan.mywidget.ProgressButtonLayout;
 import com.yan.mywidgetsample.R;
@@ -32,7 +31,7 @@ public class ProgressButtonActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //pbl.hideProgress();
-                        pbl.showCover(new ProgressButtonLayout.CoverCallback() {
+                        pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
                             @Override
                             public void onCovered() {
                                 Intent intent = new Intent(ProgressButtonActivity.this, ProgressButtonActivity.class);
@@ -44,13 +43,14 @@ public class ProgressButtonActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
                                 }
+                                pbl.hideProgressImmediately();
                                 //finish();
-                                pbl.postDelayed(new Runnable() {
+                                /*pbl.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         finish();
                                     }
-                                }, 500);
+                                }, 500);*/
                             }
                         });
                     }
