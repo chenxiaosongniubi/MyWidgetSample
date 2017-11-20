@@ -30,6 +30,12 @@ public class ProgressButtonActivity extends AppCompatActivity {
                 pbl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        pbl.hideProgress();
+                    }
+                }, 1000);
+                /*pbl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         //pbl.hideProgress();
                         pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
                             @Override
@@ -45,16 +51,16 @@ public class ProgressButtonActivity extends AppCompatActivity {
                                 }
                                 pbl.hideProgressImmediately();
                                 //finish();
-                                /*pbl.postDelayed(new Runnable() {
+                                *//*pbl.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         finish();
                                     }
-                                }, 500);*/
+                                }, 500);*//*
                             }
                         });
                     }
-                }, 2000);
+                }, 2000);*/
             }
         });
     }

@@ -34,6 +34,11 @@ public class ProgressButtonLayout extends FrameLayout {
     private Drawable buttonBg;
     private String buttonText;
     private boolean isProgressShowing;
+    private Status status = Status.HIDE;
+
+    enum Status {
+        SHOWING, SHOWED, HIDING, HIDE
+    }
 
     public ProgressButtonLayout(@NonNull Context context) {
         super(context);
@@ -169,6 +174,7 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = true;
+        status = Status.SHOWING;
 
         final int bw = button.getMeasuredWidth();
         buttonWidth = bw;
@@ -185,11 +191,16 @@ public class ProgressButtonLayout extends FrameLayout {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                if (status != Status.SHOWING) {
+                    return;
+                }
+
                 int value = (int) animation.getAnimatedValue();
                 button.getLayoutParams().width = value;
                 button.requestLayout();
                 if (value == pw) {
                     progress.setVisibility(VISIBLE);
+                    status = Status.SHOWED;
                 }
             }
         });
@@ -216,6 +227,7 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = false;
+        status = Status.HIDING;
         final int bw = buttonWidth;
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -224,6 +236,9 @@ public class ProgressButtonLayout extends FrameLayout {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                if (status != Status.HIDING) {
+                    return;
+                }
                 int value = (int) animation.getAnimatedValue();
                 button.getLayoutParams().width = value;
                 button.requestLayout();
@@ -231,6 +246,7 @@ public class ProgressButtonLayout extends FrameLayout {
                     button.setBackgroundDrawable(buttonBg);
                     button.setText(buttonText);
                     button.setEnabled(true);
+                    status = Status.HIDE;
                 }
             }
         });
