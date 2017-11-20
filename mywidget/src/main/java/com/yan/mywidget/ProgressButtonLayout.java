@@ -97,7 +97,11 @@ public class ProgressButtonLayout extends FrameLayout {
         this.coverResId = coverResId;
     }
 
-    public void showCover(final CoverCallback coverCallback) {
+    public void showCover(CoverCallback coverCallback) {
+        showCover(800, coverCallback);
+    }
+
+    public void showCover(int duration, final CoverCallback coverCallback) {
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
             return;
@@ -143,10 +147,6 @@ public class ProgressButtonLayout extends FrameLayout {
         }).start();
     }
 
-    public interface CoverCallback {
-        void onCovered();
-    }
-
     private static WindowManager.LayoutParams getWindowLayoutParams() {
         WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
         wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
@@ -161,6 +161,10 @@ public class ProgressButtonLayout extends FrameLayout {
     }
 
     public void showProgress() {
+        showProgress(500);
+    }
+
+    public void showProgress(int duration) {
         if (isProgressShowing) {
             return;
         }
@@ -171,7 +175,7 @@ public class ProgressButtonLayout extends FrameLayout {
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.setDuration(500);
+        valueAnimator.setDuration(duration);
         valueAnimator.setIntValues(bw, pw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -189,6 +193,10 @@ public class ProgressButtonLayout extends FrameLayout {
     }
 
     public void hideProgress() {
+        hideProgress(500);
+    }
+
+    public void hideProgress(int duration) {
         if (!isProgressShowing) {
             return;
         }
@@ -196,7 +204,7 @@ public class ProgressButtonLayout extends FrameLayout {
         final int bw = button.getMeasuredWidth();
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
-        valueAnimator.setDuration(500);
+        valueAnimator.setDuration(duration);
         valueAnimator.setIntValues(pw, bw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -217,5 +225,9 @@ public class ProgressButtonLayout extends FrameLayout {
 
     private int getAlphaColor(float percent, int color) {
         return ((int) (0xff * percent) << 24) & color;
+    }
+
+    public interface CoverCallback {
+        void onCovered();
     }
 }
