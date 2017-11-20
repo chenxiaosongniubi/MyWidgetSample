@@ -11,20 +11,20 @@ import android.view.Window;
 import com.yan.mywidget.ProgressButtonLayout;
 import com.yan.mywidgetsample.R;
 
+import java.text.MessageFormat;
+
 public class ProgressButtonActivity extends AppCompatActivity {
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        }*/
-
         setContentView(R.layout.activity_progress_button);
+        count = getIntent().getIntExtra("count", 0) + 1;
 
         final ProgressButtonLayout pbl = findViewById(R.id.pbl);
-        pbl.setOnClickListener(new View.OnClickListener() {
+        pbl.getButton().setText(MessageFormat.format("Enter ProgressButtonActivity << {0} >>", count));
+        pbl.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pbl.showProgress();
@@ -35,7 +35,8 @@ public class ProgressButtonActivity extends AppCompatActivity {
                         pbl.showCover(new ProgressButtonLayout.CoverCallback() {
                             @Override
                             public void onCovered() {
-                                Intent intent = new Intent(ProgressButtonActivity.this, IndexViewActivity.class);
+                                Intent intent = new Intent(ProgressButtonActivity.this, ProgressButtonActivity.class);
+                                intent.putExtra("count", count);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonActivity.this);
                                     startActivity(intent, option.toBundle());

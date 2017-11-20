@@ -14,7 +14,7 @@
         android:layout_marginRight="28dp"
         android:addStatesFromChildren="true"
         app:background="@drawable/sc_btn"
-        app:cover="@drawable/ic_launcher_background"
+        app:cover="@drawable/ic_cover"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

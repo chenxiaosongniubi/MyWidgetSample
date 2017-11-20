@@ -33,15 +33,9 @@ public class ProgressButtonLayout extends FrameLayout {
 
     private Drawable buttonBg;
     private String buttonText;
-    private int buttonWidth;
-    private int progressWidth;
+    //    private int buttonWidth;
+//    private int progressWidth;
     private boolean isProgressShowing;
-
-    private OnClickListener onClickListener;
-
-    public void setOnClickListener(OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
-    }
 
     public ProgressButtonLayout(@NonNull Context context) {
         super(context);
@@ -67,32 +61,32 @@ public class ProgressButtonLayout extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        post(new Runnable() {
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof TextView) {
+                button = (TextView) view;
+                buttonBg = button.getBackground();
+                buttonText = button.getText().toString();
+            } else {
+                progress = view;
+                progress.setVisibility(INVISIBLE);
+            }
+        }
+        /*post(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < getChildCount(); i++) {
-                    View view = getChildAt(i);
-                    if (view instanceof TextView) {
-                        button = (TextView) view;
-                        buttonBg = button.getBackground();
-                        buttonText = button.getText().toString();
-                        buttonWidth = button.getMeasuredWidth();
-                        button.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (onClickListener != null) {
-                                    onClickListener.onClick(v);
-                                }
-                            }
-                        });
-                    } else {
-                        progress = view;
-                        progressWidth = progress.getMeasuredWidth();
-                        progress.setVisibility(INVISIBLE);
-                    }
-                }
+                buttonWidth = button.getMeasuredWidth();
+                progressWidth = progress.getMeasuredWidth();
             }
-        });
+        });*/
+    }
+
+    public TextView getButton() {
+        return button;
+    }
+
+    public View getProgress() {
+        return progress;
     }
 
     public void setBgResId(int bgResId) {
@@ -109,7 +103,8 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         float sh = getResources().getDisplayMetrics().heightPixels;
-        int size = progressWidth;
+        int pw = progress.getMeasuredWidth();
+        int ph = progress.getMeasuredHeight();
         int[] location = new int[2];
         progress.getLocationInWindow(location);
         if (cover == null) {
@@ -117,7 +112,7 @@ public class ProgressButtonLayout extends FrameLayout {
         }
         Log.i(tag, location[0] + ":" + location[1]);
         FrameLayout frameLayout = new FrameLayout(getContext());
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size / 2, size / 2);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(pw / 2, ph / 2);
         frameLayout.setBackgroundColor(0x44000000);
         cover.setLayoutParams(layoutParams);
         cover.setImageResource(coverResId);
@@ -125,7 +120,7 @@ public class ProgressButtonLayout extends FrameLayout {
         cover.setY(location[1] - (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
         frameLayout.addView(cover);
         windowManager.addView(frameLayout, getWindowLayoutParams());
-        cover.animate().setDuration(1000).scaleX(sh / size * 4).scaleY(sh / size * 4).setListener(new Animator.AnimatorListener() {
+        cover.animate().setDuration(1000).scaleX(sh / pw * 4).scaleY(sh / ph * 4).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -172,17 +167,19 @@ public class ProgressButtonLayout extends FrameLayout {
         isProgressShowing = true;
         button.setEnabled(false);
         button.setBackgroundResource(bgResId);
+        final int bw = button.getMeasuredWidth();
+        final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(500);
-        valueAnimator.setIntValues(buttonWidth, progressWidth);
+        valueAnimator.setIntValues(bw, pw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int value = (int) animation.getAnimatedValue();
                 button.getLayoutParams().width = value;
                 button.requestLayout();
-                if (value == progressWidth) {
+                if (value == pw) {
                     progress.setVisibility(VISIBLE);
                 }
             }
@@ -196,16 +193,18 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = false;
+        final int bw = button.getMeasuredWidth();
+        final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(500);
-        valueAnimator.setIntValues(progressWidth, buttonWidth);
+        valueAnimator.setIntValues(pw, bw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int value = (int) animation.getAnimatedValue();
                 button.getLayoutParams().width = value;
                 button.requestLayout();
-                if (value == buttonWidth) {
+                if (value == bw) {
                     button.setBackgroundDrawable(buttonBg);
                     button.setText(buttonText);
                     button.setEnabled(true);
