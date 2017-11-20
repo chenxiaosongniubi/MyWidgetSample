@@ -123,7 +123,8 @@ public class ProgressButtonLayout extends FrameLayout {
         cover.setY(location[1] + (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
         coverLayout.addView(cover);
         parent.addView(coverLayout, getWindowLayoutParams());
-        cover.animate().setDuration(800).scaleX(sh / pw * 4).scaleY(sh / ph * 4).setListener(new Animator.AnimatorListener() {
+        cover.setAlpha(0f);
+        cover.animate().setDuration(duration).scaleX(sh / pw * 4).scaleY(sh / ph * 4).alpha(1).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
 

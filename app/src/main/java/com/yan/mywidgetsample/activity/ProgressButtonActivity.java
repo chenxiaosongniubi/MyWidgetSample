@@ -27,13 +27,13 @@ public class ProgressButtonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pbl.showProgress();
-                pbl.postDelayed(new Runnable() {
+                /*pbl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         pbl.hideProgress();
                     }
-                }, 1000);
-                /*pbl.postDelayed(new Runnable() {
+                }, 1000);*/
+                pbl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //pbl.hideProgress();
@@ -51,16 +51,16 @@ public class ProgressButtonActivity extends AppCompatActivity {
                                 }
                                 pbl.hideProgressImmediately();
                                 //finish();
-                                *//*pbl.postDelayed(new Runnable() {
+                                /*pbl.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         finish();
                                     }
-                                }, 500);*//*
+                                }, 500);*/
                             }
                         });
                     }
-                }, 2000);*/
+                }, 2000);
             }
         });
     }
