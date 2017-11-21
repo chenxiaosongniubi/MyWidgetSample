@@ -4,24 +4,21 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * Created by yanweiqiang on 2017/11/17.
+ * yanweiqiang
+ * 2017/11/17.
  */
-
 public class ProgressButtonLayout extends FrameLayout {
     private final String tag = ProgressButtonLayout.class.getSimpleName();
     private TextView button;
@@ -91,81 +88,6 @@ public class ProgressButtonLayout extends FrameLayout {
         this.coverResId = coverResId;
     }
 
-    public void showCover(View rootView, CoverCallback coverCallback) {
-        showCover((ViewGroup) rootView, 800, coverCallback);
-    }
-
-    public void hideCover() {
-        coverLayout.setVisibility(GONE);
-    }
-
-    public void removeCover(View rootView) {
-        ViewGroup parent = (ViewGroup) rootView;
-        if (coverLayout != null && coverLayout.getParent() != null) {
-            parent.removeView(coverLayout);
-        }
-    }
-
-    public void showCover(final View rootView, int duration, final CoverCallback coverCallback) {
-        removeCover(rootView);
-        ViewGroup parent = (ViewGroup) rootView;
-        float sh = getResources().getDisplayMetrics().heightPixels;
-        int pw = progress.getMeasuredWidth();
-        int ph = progress.getMeasuredHeight();
-        int[] location = new int[2];
-        progress.getLocationInWindow(location);
-        coverLayout = new FrameLayout(getContext());
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(pw / 2, ph / 2);
-        ImageView cover = new ImageView(getContext());
-        cover.setLayoutParams(layoutParams);
-        cover.setImageResource(coverResId);
-        cover.setX(location[0] + (progress.getMeasuredWidth() - cover.getMeasuredWidth()) / 4);
-        cover.setY(location[1] + (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
-        coverLayout.addView(cover);
-        parent.addView(coverLayout, getWindowLayoutParams());
-        cover.setAlpha(0f);
-        cover.animate().setDuration(duration).scaleX(sh / pw * 4).scaleY(sh / ph * 4).alpha(1).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                coverCallback.onCovered();
-                coverLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeCover(rootView);
-                    }
-                }, 500);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        }).start();
-    }
-
-    private static WindowManager.LayoutParams getWindowLayoutParams() {
-        WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
-        wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
-        wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        wmParams.gravity = Gravity.START | Gravity.TOP;
-        wmParams.x = 0;
-        wmParams.y = 0;
-        wmParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        wmParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        return wmParams;
-    }
-
     public void showProgress() {
         showProgress(500);
     }
@@ -211,6 +133,7 @@ public class ProgressButtonLayout extends FrameLayout {
 
     public void hideProgressImmediately() {
         isProgressShowing = false;
+        status = Status.HIDE;
         button.getLayoutParams().width = buttonWidth;
         button.requestLayout();
         button.setBackgroundDrawable(buttonBg);
@@ -253,6 +176,69 @@ public class ProgressButtonLayout extends FrameLayout {
         });
         progress.setVisibility(GONE);
         valueAnimator.start();
+    }
+
+    public void showCover(View rootView, CoverCallback coverCallback) {
+        showCover((ViewGroup) rootView, 800, coverCallback);
+    }
+
+    public void showCover(final View rootView, int duration, final CoverCallback coverCallback) {
+        removeCover(rootView);
+        ViewGroup parent = (ViewGroup) rootView;
+        float sh = getResources().getDisplayMetrics().heightPixels;
+        int pw = progress.getMeasuredWidth();
+        int ph = progress.getMeasuredHeight();
+        int[] location = new int[2];
+        progress.getLocationInWindow(location);
+        coverLayout = new FrameLayout(getContext());
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(pw / 2, ph / 2);
+        ImageView cover = new ImageView(getContext());
+        cover.setLayoutParams(layoutParams);
+        cover.setImageResource(coverResId);
+        cover.setX(location[0] + (progress.getMeasuredWidth() - cover.getMeasuredWidth()) / 4);
+        cover.setY(location[1] + (progress.getMeasuredHeight() - cover.getMeasuredHeight()) / 4);
+        coverLayout.addView(cover);
+        ViewGroup.LayoutParams parentParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        parent.addView(coverLayout, parentParams);
+        cover.setAlpha(0f);
+        cover.animate().setDuration(duration).scaleX(sh / pw * 4).scaleY(sh / ph * 4).alpha(1).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                coverCallback.onCovered();
+                coverLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        removeCover(rootView);
+                    }
+                }, 500);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).start();
+    }
+
+    public void hideCover() {
+        coverLayout.setVisibility(GONE);
+    }
+
+    public void removeCover(View rootView) {
+        ViewGroup parent = (ViewGroup) rootView;
+        if (coverLayout != null && coverLayout.getParent() != null) {
+            parent.removeView(coverLayout);
+        }
     }
 
     private int getAlphaColor(float percent, int color) {

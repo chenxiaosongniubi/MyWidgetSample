@@ -26,7 +26,7 @@ public class ProgressButtonActivity extends AppCompatActivity {
         pbl.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pbl.showProgress();
+                pbl.showProgress(500);
                 /*pbl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -36,7 +36,6 @@ public class ProgressButtonActivity extends AppCompatActivity {
                 pbl.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //pbl.hideProgress();
                         pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
                             @Override
                             public void onCovered() {
@@ -50,13 +49,6 @@ public class ProgressButtonActivity extends AppCompatActivity {
                                     overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
                                 }
                                 pbl.hideProgressImmediately();
-                                //finish();
-                                /*pbl.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                    }
-                                }, 500);*/
                             }
                         });
                     }
