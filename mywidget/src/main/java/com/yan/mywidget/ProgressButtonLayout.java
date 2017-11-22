@@ -3,6 +3,7 @@ package com.yan.mywidget;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -10,7 +11,10 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +25,7 @@ import android.widget.TextView;
  */
 public class ProgressButtonLayout extends FrameLayout {
     private final String tag = ProgressButtonLayout.class.getSimpleName();
+    private final float density = Resources.getSystem().getDisplayMetrics().density;
     private TextView button;
     private View progress;
     private FrameLayout coverLayout;
@@ -63,11 +68,12 @@ public class ProgressButtonLayout extends FrameLayout {
         super.onFinishInflate();
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof TextView) {
+            if (view instanceof Button) {
                 button = (TextView) view;
             } else {
                 progress = view;
-                progress.setVisibility(INVISIBLE);
+                progress.setAlpha(0f);
+                progress.setBackgroundResource(bgResId);
             }
         }
     }
@@ -89,7 +95,7 @@ public class ProgressButtonLayout extends FrameLayout {
     }
 
     public void showProgress() {
-        showProgress(500);
+        showProgress(100);
     }
 
     public void showProgress(int duration) {
@@ -108,7 +114,7 @@ public class ProgressButtonLayout extends FrameLayout {
         button.setBackgroundResource(bgResId);
         final int pw = progress.getMeasuredWidth();
         ValueAnimator valueAnimator = new ValueAnimator();
-        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         valueAnimator.setDuration(duration);
         valueAnimator.setIntValues(bw, pw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -122,12 +128,12 @@ public class ProgressButtonLayout extends FrameLayout {
                 button.getLayoutParams().width = value;
                 button.requestLayout();
                 if (value == pw) {
-                    progress.setVisibility(VISIBLE);
+                    progress.animate().alpha(1f).start();
                     status = Status.SHOWED;
                 }
             }
         });
-        button.setText(null);
+        //button.setText(null);
         valueAnimator.start();
     }
 
@@ -139,11 +145,11 @@ public class ProgressButtonLayout extends FrameLayout {
         button.setBackgroundDrawable(buttonBg);
         button.setText(buttonText);
         button.setEnabled(true);
-        progress.setVisibility(GONE);
+        progress.setAlpha(0f);
     }
 
     public void hideProgress() {
-        hideProgress(500);
+        hideProgress(100);
     }
 
     public void hideProgress(int duration) {
@@ -151,10 +157,19 @@ public class ProgressButtonLayout extends FrameLayout {
             return;
         }
         isProgressShowing = false;
-        status = Status.HIDING;
+
         final int bw = buttonWidth;
-        final int pw = progress.getMeasuredWidth();
+        final int pw;
+
+        if (status == Status.SHOWING) {
+            pw = button.getMeasuredWidth();
+        } else {
+            pw = progress.getMeasuredWidth();
+        }
+
+        status = Status.HIDING;
         ValueAnimator valueAnimator = new ValueAnimator();
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         valueAnimator.setDuration(duration);
         valueAnimator.setIntValues(pw, bw);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -167,19 +182,39 @@ public class ProgressButtonLayout extends FrameLayout {
                 button.getLayoutParams().width = value;
                 button.requestLayout();
                 if (value == bw) {
-                    button.setBackgroundDrawable(buttonBg);
-                    button.setText(buttonText);
-                    button.setEnabled(true);
-                    status = Status.HIDE;
+                    float translateDistance = buttonWidth / 100f;
+                    TranslateAnimation translateAnimation = new TranslateAnimation(-translateDistance, translateDistance, 0, 0);
+                    translateAnimation.setDuration(80);
+                    translateAnimation.setRepeatCount(4);
+                    translateAnimation.setRepeatMode(Animation.REVERSE);
+                    translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            status = Status.HIDE;
+                            button.setBackgroundDrawable(buttonBg);
+                            button.setEnabled(true);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    startAnimation(translateAnimation);
                 }
             }
         });
-        progress.setVisibility(GONE);
+        progress.animate().alpha(0f).start();
         valueAnimator.start();
     }
 
     public void showCover(View rootView, CoverCallback coverCallback) {
-        showCover((ViewGroup) rootView, 800, coverCallback);
+        showCover((ViewGroup) rootView, 350, coverCallback);
     }
 
     public void showCover(final View rootView, int duration, final CoverCallback coverCallback) {
@@ -191,7 +226,7 @@ public class ProgressButtonLayout extends FrameLayout {
         int[] location = new int[2];
         progress.getLocationInWindow(location);
         coverLayout = new FrameLayout(getContext());
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(pw / 2, ph / 2);
+        LayoutParams layoutParams = new LayoutParams(pw / 2, ph / 2);
         ImageView cover = new ImageView(getContext());
         cover.setLayoutParams(layoutParams);
         cover.setImageResource(coverResId);

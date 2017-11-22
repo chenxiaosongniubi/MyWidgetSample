@@ -32,24 +32,12 @@ public class ViewAttachment {
         ViewParent viewParent = view.getParent();
         ViewGroup parent = (ViewGroup) viewParent;
         int index = parent.indexOfChild(view);
-
         parent.removeView(view);
-
-
         FrameLayout frameLayout = new FrameLayout(view.getContext());
-
-        if (view.getLayoutParams() instanceof ConstraintLayout.LayoutParams) {
-            frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams((ConstraintLayout.LayoutParams) view.getLayoutParams()));
-        } else if (view.getLayoutParams() instanceof TableLayout.LayoutParams) {
-            frameLayout.setLayoutParams(new TableLayout.LayoutParams((TableLayout.LayoutParams) view.getLayoutParams()));
-        } else {
-            frameLayout.setLayoutParams(new ViewGroup.LayoutParams(view.getLayoutParams()));
-        }
-
+        frameLayout.setLayoutParams(view.getLayoutParams());
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         frameLayout.addView(view);
         frameLayout.addView(child);
-
         parent.addView(frameLayout, index);
     }
 

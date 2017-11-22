@@ -22,37 +22,40 @@ public class ProgressButtonActivity extends AppCompatActivity {
         count = getIntent().getIntExtra("count", 0) + 1;
 
         final ProgressButtonLayout pbl = findViewById(R.id.pbl);
-        pbl.getButton().setText(MessageFormat.format("Enter ProgressButtonActivity << {0} >>", count));
+        pbl.getButton().setText(MessageFormat.format("start{0}", count));
         pbl.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pbl.showProgress(500);
-                /*pbl.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pbl.hideProgress();
-                    }
-                }, 1000);*/
-                pbl.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
-                            @Override
-                            public void onCovered() {
-                                Intent intent = new Intent(ProgressButtonActivity.this, ProgressButtonActivity.class);
-                                intent.putExtra("count", count);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonActivity.this);
-                                    startActivity(intent, option.toBundle());
-                                } else {
-                                    startActivity(intent);
-                                    overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
+                if (count % 2 == 0) {
+                    pbl.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pbl.hideProgress();
+                        }
+                    }, 100);
+                } else {
+                    pbl.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
+                                @Override
+                                public void onCovered() {
+                                    Intent intent = new Intent(ProgressButtonActivity.this, ProgressButtonActivity.class);
+                                    intent.putExtra("count", count);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonActivity.this);
+                                        startActivity(intent, option.toBundle());
+                                    } else {
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.alpha_in, R.anim.alpha_out);
+                                    }
+                                    pbl.hideProgressImmediately();
                                 }
-                                pbl.hideProgressImmediately();
-                            }
-                        });
-                    }
-                }, 2000);
+                            });
+                        }
+                    }, 2000);
+                }
             }
         });
     }
