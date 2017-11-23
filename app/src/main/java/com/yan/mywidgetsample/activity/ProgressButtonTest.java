@@ -12,7 +12,7 @@ import com.yan.mywidgetsample.R;
 
 import java.text.MessageFormat;
 
-public class ProgressButtonActivity extends AppCompatActivity {
+public class ProgressButtonTest extends AppCompatActivity {
     private int count;
 
     @Override
@@ -41,10 +41,10 @@ public class ProgressButtonActivity extends AppCompatActivity {
                             pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
                                 @Override
                                 public void onCovered() {
-                                    Intent intent = new Intent(ProgressButtonActivity.this, ProgressButtonActivity.class);
+                                    Intent intent = new Intent(ProgressButtonTest.this, ProgressButtonTest.class);
                                     intent.putExtra("count", count);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonActivity.this);
+                                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonTest.this);
                                         startActivity(intent, option.toBundle());
                                     } else {
                                         startActivity(intent);

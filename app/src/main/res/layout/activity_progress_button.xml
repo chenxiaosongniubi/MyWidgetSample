@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yan.mywidgetsample.activity.ProgressButtonActivity">
+    tools:context="com.yan.mywidgetsample.activity.ProgressButtonTest">
 
     <com.yan.mywidget.ProgressButtonLayout
         android:id="@+id/pbl"

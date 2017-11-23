@@ -28,7 +28,7 @@ public class DividerDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         //super.getItemOffsets(outRect, view, parent, state);
-        Log.i(tag, "" + outRect.left + " " + outRect.top + " " + outRect.right + " " + outRect.bottom + " " + state);
+        //Log.i(tag, "" + outRect.left + " " + outRect.top + " " + outRect.right + " " + outRect.bottom + " " + state);
         outRect.bottom = 10;
     }
 }

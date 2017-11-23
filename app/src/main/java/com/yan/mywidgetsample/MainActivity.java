@@ -9,11 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.yan.mywidget.ProgressButtonLayout;
 import com.yan.mywidgetsample.activity.IndexViewActivity;
-import com.yan.mywidgetsample.activity.ProgressButtonActivity;
+import com.yan.mywidgetsample.activity.NumberFilterTest;
+import com.yan.mywidgetsample.activity.ProgressButtonTest;
 import com.yan.mywidgetsample.activity.ViewAttachmentTest;
 
 import java.util.ArrayList;
@@ -35,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         List<Class> classList = new ArrayList<>();
         classList.add(ViewAttachmentTest.class);
         classList.add(IndexViewActivity.class);
-        classList.add(ProgressButtonActivity.class);
+        classList.add(ProgressButtonTest.class);
+        classList.add(NumberFilterTest.class);
         return classList;
     }
 

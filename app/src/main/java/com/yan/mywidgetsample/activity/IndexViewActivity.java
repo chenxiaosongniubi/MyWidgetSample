@@ -5,11 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
 import android.view.Window;
 
+import com.yan.mywidget.RecyclerIndex;
 import com.yan.mywidgetsample.DividerDecoration;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Data;
@@ -34,7 +33,10 @@ public class IndexViewActivity extends AppCompatActivity {
         rv = findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.addItemDecoration(new DividerDecoration());
-        rv.setAdapter(new IndexViewAdapter(getViewTypeList()));
+        IndexViewAdapter adapter = new IndexViewAdapter(getViewTypeList());
+        rv.setAdapter(adapter);
+
+        new RecyclerIndex().attachIndex(rv);
     }
 
     private List<ViewType> getViewTypeList() {

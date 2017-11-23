@@ -16,6 +16,7 @@ import android.widget.TableLayout;
  * Created by yanweiqiang on 2017/11/14.
  */
 public class ViewAttachment {
+    private FrameLayout attachmentRoot;
     private View child;
 
     private ViewAttachment(View child) {
@@ -33,12 +34,22 @@ public class ViewAttachment {
         ViewGroup parent = (ViewGroup) viewParent;
         int index = parent.indexOfChild(view);
         parent.removeView(view);
-        FrameLayout frameLayout = new FrameLayout(view.getContext());
-        frameLayout.setLayoutParams(view.getLayoutParams());
+        attachmentRoot = new FrameLayout(view.getContext());
+        attachmentRoot.setLayoutParams(view.getLayoutParams());
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        frameLayout.addView(view);
-        frameLayout.addView(child);
-        parent.addView(frameLayout, index);
+        attachmentRoot.addView(view);
+        if (child != null) {
+            attachmentRoot.addView(child);
+        }
+        parent.addView(attachmentRoot, index);
+    }
+
+    public void changeChild(View newChildView) {
+        if (child != null) {
+            attachmentRoot.removeView(child);
+        }
+        attachmentRoot.addView(newChildView);
+        child = newChildView;
     }
 
     public View getChild() {
@@ -50,10 +61,18 @@ public class ViewAttachment {
     }
 
     public void hide() {
+        if (child == null) {
+            return;
+        }
+
         child.setVisibility(View.GONE);
     }
 
     public void show() {
+        if (child == null) {
+            return;
+        }
+
         child.setVisibility(View.VISIBLE);
     }
 
@@ -93,14 +112,11 @@ public class ViewAttachment {
         }
 
         public ViewAttachment build() {
-            if (child == null) {
-                throw new IllegalStateException("Child can't be null!");
-            }
-
             ViewAttachment viewAttachment = new ViewAttachment(child);
-            viewAttachment.child.setOnClickListener(onClickListener);
-            viewAttachment.child.setOnTouchListener(onTouchListener);
-
+            if (child != null) {
+                viewAttachment.child.setOnClickListener(onClickListener);
+                viewAttachment.child.setOnTouchListener(onTouchListener);
+            }
             if (view != null) {
                 viewAttachment.attachTo(view);
             }

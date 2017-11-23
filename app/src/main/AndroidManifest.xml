@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".activity.ViewAttachmentTest" />
         <activity android:name=".activity.IndexViewActivity" />
-        <activity android:name=".activity.ProgressButtonActivity" />
+        <activity android:name=".activity.ProgressButtonTest" />
+        <activity android:name=".activity.NumberFilterTest"></activity>
     </application>
 
 </manifest>

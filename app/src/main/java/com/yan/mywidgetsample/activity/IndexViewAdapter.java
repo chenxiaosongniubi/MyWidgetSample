@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.yan.mywidget.RecyclerIndex;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Data;
 import com.yan.mywidgetsample.entity.Index;
@@ -43,8 +44,7 @@ public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         if (holder instanceof IndexHolder) {
             IndexHolder indexHolder = (IndexHolder) holder;
-            Index index = (Index) viewType;
-            indexHolder.text.setText(index.getText());
+            indexHolder.display((Index) viewType);
         }
 
         if (holder instanceof DataHolder) {
@@ -64,12 +64,30 @@ public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return viewTypeList.get(position).getViewType();
     }
 
-    class IndexHolder extends RecyclerView.ViewHolder {
+    class IndexHolder extends RecyclerView.ViewHolder implements RecyclerIndex.Index<Index> {
         TextView text;
+
+        Index data;
 
         public IndexHolder(View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.text);
+        }
+
+        @Override
+        public View getView() {
+            return itemView;
+        }
+
+        @Override
+        public Index getData() {
+            return data;
+        }
+
+        @Override
+        public void display(Index data) {
+            this.data = data;
+            text.setText(data.getText());
         }
     }
 
