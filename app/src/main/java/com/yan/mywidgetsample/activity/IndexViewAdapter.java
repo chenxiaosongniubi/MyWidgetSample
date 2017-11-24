@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yan.mywidget.RecyclerIndex;
+import com.yan.mywidget.RecyclerIndexBar;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Data;
 import com.yan.mywidgetsample.entity.Index;
@@ -19,7 +20,7 @@ import java.util.List;
  * Created by yanweiqiang on 2017/11/15.
  */
 
-public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements RecyclerIndex.IAdapter<ViewType> {
     private final String tag = IndexViewAdapter.class.getSimpleName();
     private List<ViewType> viewTypeList;
 
@@ -30,7 +31,6 @@ public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.i(tag, "onCreateViewHolder");
         if (viewType == 0) {
             return new IndexHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_index, parent, false));
         }
@@ -64,7 +64,12 @@ public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return viewTypeList.get(position).getViewType();
     }
 
-    class IndexHolder extends RecyclerView.ViewHolder implements RecyclerIndex.Index<Index> {
+    @Override
+    public List<ViewType> getDataList() {
+        return viewTypeList;
+    }
+
+    class IndexHolder extends RecyclerView.ViewHolder implements RecyclerIndex.IViewHolder<Index> {
         TextView text;
 
         Index data;

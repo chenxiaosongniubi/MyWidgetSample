@@ -3,10 +3,13 @@ package com.yan.mywidgetsample.activity;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Fade;
+import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.yan.mywidget.RecyclerIndex;
 import com.yan.mywidgetsample.DividerDecoration;
@@ -18,8 +21,8 @@ import com.yan.mywidgetsample.entity.ViewType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexViewActivity extends AppCompatActivity {
-    RecyclerView rv;
+public class IndexViewTest extends AppCompatActivity {
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,19 +33,26 @@ public class IndexViewActivity extends AppCompatActivity {
             getWindow().setEnterTransition(new Fade());
         }
         setContentView(R.layout.activity_index_view);
-        rv = findViewById(R.id.rv);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.addItemDecoration(new DividerDecoration());
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerDecoration());
         IndexViewAdapter adapter = new IndexViewAdapter(getViewTypeList());
-        rv.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
-        new RecyclerIndex().attachIndex(rv);
+        final RecyclerIndex<Index> index = new RecyclerIndex<>(recyclerView);
+        index.attachIndex();
+        index.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), index.getData().getText(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private List<ViewType> getViewTypeList() {
         List<ViewType> viewTypeList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            if (i % 10 == 0) {
+        for (int i = 0; i < 10000; i++) {
+            if (i % 20 == 0) {
                 Index index = new Index();
                 index.setText("index " + i / 10);
                 viewTypeList.add(index);
