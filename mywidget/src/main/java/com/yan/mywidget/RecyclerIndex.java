@@ -21,9 +21,8 @@ import java.util.concurrent.Executors;
 public class RecyclerIndex<T> {
     private final String tag = RecyclerIndex.class.getSimpleName();
     private ViewAttachment viewAttachment;
-    private IViewHolder<T> index;
+    private IViewHolder<T> indexHolder;
     private RecyclerView recyclerView;
-    private ExecutorService es;
     private View preTitleView;
     private View.OnClickListener onClickListener;
     private T data;
@@ -33,8 +32,6 @@ public class RecyclerIndex<T> {
     public RecyclerIndex(RecyclerView recyclerView) {
         super();
         this.recyclerView = recyclerView;
-        es = Executors.newSingleThreadExecutor();
-
         if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
             GridLayoutManager manager = (GridLayoutManager) recyclerView.getLayoutManager();
             if (manager.getSpanCount() > 1) {
@@ -68,56 +65,21 @@ public class RecyclerIndex<T> {
             @Override
             public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                syncProcessScroll();
-            }
-        });
-
-        recyclerView.getAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-                syncProcessScroll();
-                Log.i(tag, "onChanged");
-            }
-
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                Log.i(tag, "onChanged");
-            }
-
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount) {
-                super.onItemRangeChanged(positionStart, itemCount);
-                Log.i(tag, "onChanged");
-            }
-
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-                super.onItemRangeChanged(positionStart, itemCount, payload);
-                Log.i(tag, "onChanged");
-            }
-
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                Log.i(tag, "onChanged");
-            }
-
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                Log.i(tag, "onChanged");
+                syncProcessScroll(false);
             }
         });
     }
 
-    public void forceChangeIndex(T data) {
-        index.display(data);
-        preTitleView.setVisibility(View.VISIBLE);
+    public void forceChangeIndex() {
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                syncProcessScroll(true);
+            }
+        });
     }
 
-    private void syncProcessScroll() {
+    private void syncProcessScroll(boolean isForce) {
         final LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
         final int position = llm.findFirstVisibleItemPosition();
 
@@ -132,14 +94,15 @@ public class RecyclerIndex<T> {
         RecyclerView.ViewHolder nextViewHolder = recyclerView.getChildViewHolder(nextView);
 
         /**
-         * A bux not fix, if app killed background by system, the index view cannot recreate in time,
+         * A bux not fix, if app killed background by system, the indexHolder view cannot recreate in time,
          * you must swipe the RecyclerView until an title view appear on the top of it.
          */
         if (indexView == null) {
             if (viewHolder instanceof IViewHolder) {
+                Log.i(tag, "init index view!");
                 IViewHolder<T> temp = (IViewHolder<T>) viewHolder;
-                index = initIndex(recyclerView, temp);
-                index.getView().setOnClickListener(onClickListener);
+                indexHolder = initIndex(recyclerView, temp);
+                indexHolder.getView().setOnClickListener(onClickListener);
             }
             return;
         }
@@ -147,10 +110,8 @@ public class RecyclerIndex<T> {
         T data = getDataList().get(position);
         T nextData = getDataList().get(position + 1);
 
-        //Log.i(tag, "position:" + position + " listSize:" + getDataList().size() + " data:" + data + " nextData:" + nextData);
-
-        //Add limit of index view refresh for performance.
-        if (data instanceof IIndex || nextData instanceof IIndex) {
+        //Add limit of indexHolder view refresh for performance.
+        if (isForce || data instanceof IIndex || nextData instanceof IIndex) {
             for (int i = position; i >= 0; i--) {
                 final T temp = getDataList().get(i);
                 if (temp instanceof IIndex) {
@@ -159,7 +120,7 @@ public class RecyclerIndex<T> {
                     }
                     preIndexPos = i;
                     RecyclerIndex.this.data = temp;
-                    index.display(temp);
+                    indexHolder.display(temp);
                     if (onIndexChangeListener != null) {
                         onIndexChangeListener.onChange(i, temp);
                     }
@@ -169,20 +130,21 @@ public class RecyclerIndex<T> {
         }
 
         if (nextViewHolder instanceof IViewHolder) {
-            //Log.i(tag, "indexViewBottom:" + indexView.getBottom() + " nextViewTop:" + nextView.getTop());
+            if (indexView.getBottom() >= nextView.getTop()) {
+                indexView.setTop(nextView.getTop() - indexView.getBottom());
+            }
 
             if (nextView.getVisibility() != View.VISIBLE) {
                 nextView.setVisibility(View.VISIBLE);
-            }
-
-            if (indexView.getBottom() > nextView.getTop()) {
-                indexView.setTop(nextView.getTop() - indexView.getBottom());
             }
         } else if (viewHolder instanceof IViewHolder) {
             if (indexView.getTop() != 0) {
                 indexView.setTop(0);
             }
 
+            if (preTitleView != null) {
+                preTitleView.setVisibility(View.VISIBLE);
+            }
             preTitleView = view;
             preTitleView.setVisibility(View.INVISIBLE);
         } else {
@@ -199,11 +161,11 @@ public class RecyclerIndex<T> {
     }
 
 
-    private IViewHolder<T> initIndex(RecyclerView recyclerView, IViewHolder<T> index) {
-        View view = index.getView();
+    private IViewHolder<T> initIndex(RecyclerView recyclerView, IViewHolder<T> indexHolder) {
+        View view = indexHolder.getView();
         recyclerView.removeView(view);
         viewAttachment.changeChild(view);
-        return index;
+        return indexHolder;
     }
 
     /**

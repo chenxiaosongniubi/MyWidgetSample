@@ -63,8 +63,9 @@ public class IndexBarAdapter extends RecyclerView.Adapter<IndexBarAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((LinearLayoutManager) recyclerIndexBar.getRecyclerView().getLayoutManager()).scrollToPositionWithOffset(recyclerIndexBar.getReversePosMap().get(finalPos), 0);
-                recyclerIndexBar.getRecyclerIndex().forceChangeIndex(index);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerIndexBar.getRecyclerView().getLayoutManager();
+                linearLayoutManager.scrollToPositionWithOffset(recyclerIndexBar.getReversePosMap().get(finalPos), 0);
+                recyclerIndexBar.getRecyclerIndex().forceChangeIndex();
             }
         });
     }

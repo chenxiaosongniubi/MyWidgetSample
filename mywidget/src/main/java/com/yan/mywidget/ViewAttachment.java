@@ -50,6 +50,7 @@ public class ViewAttachment {
         }
         attachmentRoot.addView(newChildView);
         child = newChildView;
+        child.requestLayout();
     }
 
     public View getChild() {
