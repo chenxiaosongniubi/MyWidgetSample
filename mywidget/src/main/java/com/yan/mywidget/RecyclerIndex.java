@@ -100,7 +100,7 @@ public class RecyclerIndex<T> {
         View nextView = llm.findViewByPosition(position + 1);
         RecyclerView.ViewHolder nextViewHolder = recyclerView.getChildViewHolder(nextView);
 
-        /**
+        /*
          * A bux not fix, if app killed background by system, the indexHolder view cannot recreate in time,
          * you must swipe the RecyclerView until an title view appear on the top of it.
          */
@@ -132,6 +132,11 @@ public class RecyclerIndex<T> {
                     preIndexPos = i;
                     RecyclerIndex.this.data = temp;
                     indexHolder.display(temp);
+
+                    if (preTitleView != null) {
+                        preTitleView.setVisibility(View.VISIBLE);
+                    }
+
                     if (onIndexChangeListener != null) {
                         onIndexChangeListener.onChange(i, temp);
                     }
@@ -141,36 +146,32 @@ public class RecyclerIndex<T> {
         }
 
         if (viewHolder instanceof IViewHolder) {
-            if (indexView.getTop() != 0) {
-                indexView.setTop(0);
+            if (indexView.getTranslationY() < 0) {
+                indexView.setTranslationY(0);
             }
+
+            view.setVisibility(View.INVISIBLE);
+            preTitleView = view;
+        } else if (nextViewHolder instanceof IViewHolder) {
             if (preTitleView != null) {
                 preTitleView.setVisibility(View.VISIBLE);
             }
-            preTitleView = view;
-            preTitleView.setVisibility(View.INVISIBLE);
-        } else if (nextViewHolder instanceof IViewHolder) {
-            //Log.i(tag, "index:" + indexView.getTop() + "\\" + indexView.getBottom() + "next top:" + nextView.getTop());
-            if (indexView.getBottom() >= nextView.getTop()) {
-                indexView.setTop(nextView.getTop() - indexView.getBottom());
-            }
 
-            if (nextView.getVisibility() != View.VISIBLE) {
-                nextView.setVisibility(View.VISIBLE);
+            if (nextView.getTop() > 0) {
+                int ty = nextView.getTop() - indexView.getMeasuredHeight();
+                ty = Math.min(ty, 0);
+                indexView.setTranslationY(ty);
             }
         } else {
-            if (indexView.getTop() != 0) {
-                indexView.setTop(0);
+            if (preTitleView != null) {
+                preTitleView.setVisibility(View.VISIBLE);
             }
 
-            if (preTitleView == null || preTitleView.getVisibility() == View.VISIBLE) {
-                return;
+            if (indexView.getTranslationY() < 0) {
+                indexView.setTranslationY(0);
             }
-
-            preTitleView.setVisibility(View.VISIBLE);
         }
     }
-
 
     private IViewHolder<T> createIndexHolder(RecyclerView recyclerView, IViewHolder<T> indexHolder) {
         View view = indexHolder.getView();

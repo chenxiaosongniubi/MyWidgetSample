@@ -53,7 +53,7 @@ public class IndexBarTest extends AppCompatActivity {
 
     private List<ViewType> getViewTypeList() {
         List<ViewType> viewTypeList = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 200; i++) {
             if (i % 10 == 0) {
                 Index index = new Index();
                 index.setText("index " + i / 10);
