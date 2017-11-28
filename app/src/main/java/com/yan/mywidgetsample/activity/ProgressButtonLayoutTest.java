@@ -12,17 +12,17 @@ import com.yan.mywidgetsample.R;
 
 import java.text.MessageFormat;
 
-public class ProgressButtonTest extends AppCompatActivity {
-    private int count;
+public class ProgressButtonLayoutTest extends AppCompatActivity {
+    private char count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_progress_button);
-        count = getIntent().getIntExtra("count", 0) + 1;
+        setContentView(R.layout.activity_progress_button_layout);
+        count = getIntent().getCharExtra("count", 'A');
 
         final ProgressButtonLayout pbl = findViewById(R.id.pbl);
-        pbl.getButton().setText(MessageFormat.format("start{0}", count));
+        pbl.getButton().setText(MessageFormat.format("Start {0}", count));
         pbl.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,10 +41,10 @@ public class ProgressButtonTest extends AppCompatActivity {
                             pbl.showCover(getWindow().peekDecorView(), new ProgressButtonLayout.CoverCallback() {
                                 @Override
                                 public void onCovered() {
-                                    Intent intent = new Intent(ProgressButtonTest.this, ProgressButtonTest.class);
-                                    intent.putExtra("count", count);
+                                    Intent intent = new Intent(ProgressButtonLayoutTest.this, ProgressButtonLayoutTest.class);
+                                    intent.putExtra("count", (char) (count + 1));
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonTest.this);
+                                        ActivityOptions option = ActivityOptions.makeSceneTransitionAnimation(ProgressButtonLayoutTest.this);
                                         startActivity(intent, option.toBundle());
                                     } else {
                                         startActivity(intent);

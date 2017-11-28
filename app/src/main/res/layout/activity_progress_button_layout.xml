@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yan.mywidgetsample.activity.ProgressButtonTest">
+    tools:context="com.yan.mywidgetsample.activity.ProgressButtonLayoutTest">
 
     <com.yan.mywidget.ProgressButtonLayout
         android:id="@+id/pbl"
@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
-        android:addStatesFromChildren="true"
         app:background="@drawable/sc_btn"
         app:cover="@drawable/ic_cover"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -35,6 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:alpha="0"
-            android:translationZ="10dp" />
+            android:elevation="2dp" />
     </com.yan.mywidget.ProgressButtonLayout>
 </android.support.constraint.ConstraintLayout>

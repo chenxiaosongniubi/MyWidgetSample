@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.yan.mywidgetsample.activity.IndexBarTest;
 import com.yan.mywidgetsample.activity.IndexViewTest;
 import com.yan.mywidgetsample.activity.NumberFilterTest;
-import com.yan.mywidgetsample.activity.ProgressButtonTest;
+import com.yan.mywidgetsample.activity.ProgressButtonLayoutTest;
 import com.yan.mywidgetsample.activity.ViewAttachmentTest;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         classList.add(ViewAttachmentTest.class);
         classList.add(IndexViewTest.class);
         classList.add(IndexBarTest.class);
-        classList.add(ProgressButtonTest.class);
+        classList.add(ProgressButtonLayoutTest.class);
         classList.add(NumberFilterTest.class);
         return classList;
     }
