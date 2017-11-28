@@ -1,16 +1,11 @@
 package com.yan.mywidget;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 
 /**
  * Created by yanweiqiang on 2017/11/14.
@@ -55,6 +50,11 @@ public class ViewAttachment {
 
     public View getChild() {
         return child;
+    }
+
+    public void removeChild() {
+        attachmentRoot.removeView(child);
+        child = null;
     }
 
     public View findViewById(int resId) {

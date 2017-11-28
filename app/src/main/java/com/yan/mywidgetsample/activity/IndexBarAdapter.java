@@ -60,12 +60,14 @@ public class IndexBarAdapter extends RecyclerView.Adapter<IndexBarAdapter.ViewHo
         } else {
             holder.itemView.setBackgroundColor(Color.WHITE);
         }
+
+        //Scroll to selected position, When index clicked.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int willSelPos = recyclerIndexBar.getReversePosMap().get(finalPos);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerIndexBar.getRecyclerView().getLayoutManager();
-                linearLayoutManager.scrollToPositionWithOffset(recyclerIndexBar.getReversePosMap().get(finalPos), 0);
-                recyclerIndexBar.getRecyclerIndex().forceChangeIndex();
+                linearLayoutManager.scrollToPositionWithOffset(willSelPos, 0);
             }
         });
     }

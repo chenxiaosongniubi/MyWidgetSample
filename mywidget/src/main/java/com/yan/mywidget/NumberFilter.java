@@ -2,10 +2,8 @@ package com.yan.mywidget;
 
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
 
 import java.text.MessageFormat;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

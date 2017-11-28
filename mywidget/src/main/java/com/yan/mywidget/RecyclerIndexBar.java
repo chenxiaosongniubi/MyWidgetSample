@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.Map;
  */
 
 public class RecyclerIndexBar<T> extends RecyclerView {
+    private final String tag = RecyclerIndexBar.class.getSimpleName();
+
     private List<T> indexList;
     private Map<Integer, Integer> posMap;
     private Map<Integer, Integer> reversePosMap;
@@ -34,6 +37,10 @@ public class RecyclerIndexBar<T> extends RecyclerView {
     }
 
     public void transformData(List<T> list) {
+        indexList.clear();
+        posMap.clear();
+        reversePosMap.clear();
+
         for (int i = 0; i < list.size(); i++) {
             T data = list.get(i);
             if (data instanceof IIndex) {
@@ -64,11 +71,23 @@ public class RecyclerIndexBar<T> extends RecyclerView {
         return recyclerIndex;
     }
 
-    public void attach(RecyclerView recyclerView, RecyclerIndex recyclerIndex) {
+    public void attach(RecyclerView recyclerView, RecyclerIndex<T> recyclerIndex) {
         this.recyclerView = recyclerView;
         this.recyclerIndex = recyclerIndex;
+        recyclerIndex.setOnIndexChangeListener(new RecyclerIndex.OnIndexChangeListener<T>() {
+            @Override
+            public void onChange(int position, T data) {
+                int barPos = getPosMap().get(position);
+                selectPosition(barPos);
+            }
+        });
     }
 
+    /**
+     * Combine with {@link RecyclerIndex} for auto select in {@link RecyclerIndexBar}
+     *
+     * @param position
+     */
     public void selectPosition(int position) {
         ((IAdapter) getAdapter()).selectPosition(position);
     }

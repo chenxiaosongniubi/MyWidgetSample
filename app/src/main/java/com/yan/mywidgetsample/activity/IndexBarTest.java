@@ -33,35 +33,27 @@ public class IndexBarTest extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerDecoration());
         IndexViewAdapter adapter = new IndexViewAdapter(data);
         recyclerView.setAdapter(adapter);
-        final RecyclerIndex<Index> index = new RecyclerIndex<>(recyclerView);
-        index.attachIndex();
+
+        final RecyclerIndex<ViewType> index = new RecyclerIndex<>();
+        index.attachIndex(recyclerView);
         index.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(), index.getData().getText(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), ((Index) index.getData()).getText(), Toast.LENGTH_SHORT).show();
             }
         });
 
         final RecyclerIndexBar<ViewType> indexBar = findViewById(R.id.index_bar);
-        indexBar.attach(recyclerView,index);
+        indexBar.attach(recyclerView, index);
         indexBar.setLayoutManager(new LinearLayoutManager(this));
         IndexBarAdapter indexBarAdapter = new IndexBarAdapter(indexBar);
         indexBar.setAdapter(indexBarAdapter);
         indexBarAdapter.refresh(data);
-
-        index.setOnIndexChangeListener(new RecyclerIndex.OnIndexChangeListener<Index>() {
-            @Override
-            public void onChange(int position, Index data) {
-                Log.i(tag, "position:" + position + " data:" + data);
-                int barPos = indexBar.getPosMap().get(position);
-                indexBar.selectPosition(barPos);
-            }
-        });
     }
 
     private List<ViewType> getViewTypeList() {
         List<ViewType> viewTypeList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             if (i % 10 == 0) {
                 Index index = new Index();
                 index.setText("index " + i / 10);
