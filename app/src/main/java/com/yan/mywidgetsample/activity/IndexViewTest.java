@@ -1,9 +1,8 @@
 package com.yan.mywidgetsample.activity;
 
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Fade;
@@ -39,8 +38,8 @@ public class IndexViewTest extends AppCompatActivity {
         IndexViewAdapter adapter = new IndexViewAdapter(getViewTypeList());
         recyclerView.setAdapter(adapter);
 
-        final RecyclerIndex<Index> index = new RecyclerIndex<>();
-        index.attachIndex(recyclerView);
+        final RecyclerIndex<Index> index = new RecyclerIndex<>(recyclerView);
+        index.attachIndex();
         index.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

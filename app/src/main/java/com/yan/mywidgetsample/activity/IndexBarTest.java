@@ -34,8 +34,8 @@ public class IndexBarTest extends AppCompatActivity {
         IndexViewAdapter adapter = new IndexViewAdapter(data);
         recyclerView.setAdapter(adapter);
 
-        final RecyclerIndex<ViewType> index = new RecyclerIndex<>();
-        index.attachIndex(recyclerView);
+        final RecyclerIndex<ViewType> index = new RecyclerIndex<>(recyclerView);
+        index.attachIndex();
         index.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
