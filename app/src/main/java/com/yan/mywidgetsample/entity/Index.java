@@ -7,7 +7,7 @@ import com.yan.mywidget.RecyclerIndexBar;
  * Created by yanweiqiang on 2017/11/15.
  */
 
-public class Index implements ViewType, RecyclerIndex.IIndex, RecyclerIndexBar.IIndex {
+public class Index implements ItemData, RecyclerIndex.IIndex, RecyclerIndexBar.IIndex {
     private int viewType;
     private String text;
 

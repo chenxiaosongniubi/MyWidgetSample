@@ -23,7 +23,8 @@
         <activity android:name=".activity.IndexViewTest" />
         <activity android:name=".activity.ProgressButtonLayoutTest" />
         <activity android:name=".activity.NumberFilterTest" />
-        <activity android:name=".activity.IndexBarTest"></activity>
+        <activity android:name=".activity.IndexBarTest" />
+        <activity android:name=".activity.PTRLLayoutTest"></activity>
     </application>
 
 </manifest>

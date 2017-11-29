@@ -1,18 +1,16 @@
 package com.yan.mywidgetsample.activity;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yan.mywidget.RecyclerIndex;
-import com.yan.mywidget.RecyclerIndexBar;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Data;
 import com.yan.mywidgetsample.entity.Index;
-import com.yan.mywidgetsample.entity.ViewType;
+import com.yan.mywidgetsample.entity.ItemData;
 
 import java.util.List;
 
@@ -20,13 +18,13 @@ import java.util.List;
  * Created by yanweiqiang on 2017/11/15.
  */
 
-public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements RecyclerIndex.IAdapter<ViewType> {
+public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements RecyclerIndex.IAdapter<ItemData> {
     private final String tag = IndexViewAdapter.class.getSimpleName();
-    private List<ViewType> viewTypeList;
+    private List<ItemData> itemDataList;
 
-    public IndexViewAdapter(List<ViewType> viewTypeList) {
+    public IndexViewAdapter(List<ItemData> itemDataList) {
         super();
-        this.viewTypeList = viewTypeList;
+        this.itemDataList = itemDataList;
     }
 
     @Override
@@ -40,33 +38,33 @@ public class IndexViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ViewType viewType = viewTypeList.get(position);
+        ItemData itemData = itemDataList.get(position);
 
         if (holder instanceof IndexHolder) {
             IndexHolder indexHolder = (IndexHolder) holder;
-            indexHolder.display((Index) viewType);
+            indexHolder.display((Index) itemData);
         }
 
         if (holder instanceof DataHolder) {
             DataHolder dataHolder = (DataHolder) holder;
-            Data data = (Data) viewType;
+            Data data = (Data) itemData;
             dataHolder.text.setText(data.getText());
         }
     }
 
     @Override
     public int getItemCount() {
-        return viewTypeList.size();
+        return itemDataList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return viewTypeList.get(position).getViewType();
+        return itemDataList.get(position).getViewType();
     }
 
     @Override
-    public List<ViewType> getDataList() {
-        return viewTypeList;
+    public List<ItemData> getDataList() {
+        return itemDataList;
     }
 
     class IndexHolder extends RecyclerView.ViewHolder implements RecyclerIndex.IViewHolder<Index> {

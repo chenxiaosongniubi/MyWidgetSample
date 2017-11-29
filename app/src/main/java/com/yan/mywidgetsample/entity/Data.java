@@ -4,7 +4,7 @@ package com.yan.mywidgetsample.entity;
  * Created by yanweiqiang on 2017/11/15.
  */
 
-public class Data implements ViewType {
+public class Data implements ItemData {
     private int viewType;
     private String text;
 

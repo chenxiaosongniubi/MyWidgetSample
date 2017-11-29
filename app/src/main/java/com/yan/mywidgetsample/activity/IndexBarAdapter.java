@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.yan.mywidget.RecyclerIndexBar;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Index;
-import com.yan.mywidgetsample.entity.ViewType;
+import com.yan.mywidgetsample.entity.ItemData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,20 +22,20 @@ import java.util.List;
  */
 
 public class IndexBarAdapter extends RecyclerView.Adapter<IndexBarAdapter.ViewHolder> implements RecyclerIndexBar.IAdapter {
-    private List<ViewType> indexList;
+    private List<ItemData> indexList;
     private int selectPosition;
     private int prePosition;
-    private RecyclerIndexBar<ViewType> recyclerIndexBar;
+    private RecyclerIndexBar<ItemData> recyclerIndexBar;
     private LinearLayoutManager linearLayoutManager;
 
-    public IndexBarAdapter(RecyclerIndexBar<ViewType> recyclerIndexBar) {
+    public IndexBarAdapter(RecyclerIndexBar<ItemData> recyclerIndexBar) {
         super();
         indexList = new ArrayList<>();
         this.recyclerIndexBar = recyclerIndexBar;
         linearLayoutManager = (LinearLayoutManager) recyclerIndexBar.getLayoutManager();
     }
 
-    public void refresh(List<ViewType> indexList) {
+    public void refresh(List<ItemData> indexList) {
         recyclerIndexBar.transformData(indexList);
 
         this.indexList.clear();

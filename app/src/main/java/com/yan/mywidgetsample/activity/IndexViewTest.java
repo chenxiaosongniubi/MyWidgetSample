@@ -15,7 +15,8 @@ import com.yan.mywidgetsample.DividerDecoration;
 import com.yan.mywidgetsample.R;
 import com.yan.mywidgetsample.entity.Data;
 import com.yan.mywidgetsample.entity.Index;
-import com.yan.mywidgetsample.entity.ViewType;
+import com.yan.mywidgetsample.entity.ItemData;
+import com.yan.mywidgetsample.util.DataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class IndexViewTest extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerDecoration());
-        IndexViewAdapter adapter = new IndexViewAdapter(getViewTypeList());
+        IndexViewAdapter adapter = new IndexViewAdapter(DataUtil.getItemDataList(555));
         recyclerView.setAdapter(adapter);
 
         final RecyclerIndex<Index> index = new RecyclerIndex<>(recyclerView);
@@ -48,22 +49,4 @@ public class IndexViewTest extends AppCompatActivity {
         });
     }
 
-    private List<ViewType> getViewTypeList() {
-        List<ViewType> viewTypeList = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            if (i % 20 == 0) {
-                Index index = new Index();
-                index.setText("index " + i / 10);
-                viewTypeList.add(index);
-                continue;
-            }
-
-            Data data = new Data();
-            data.setViewType(1);
-            data.setText("data " + i);
-            viewTypeList.add(data);
-        }
-
-        return viewTypeList;
-    }
 }

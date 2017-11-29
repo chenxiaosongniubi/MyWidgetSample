@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +22,8 @@ public class RecyclerIndexBar<T> extends RecyclerView {
     private final String tag = RecyclerIndexBar.class.getSimpleName();
 
     private List<T> indexList;
-    private Map<Integer, Integer> posMap;
-    private Map<Integer, Integer> reversePosMap;
+    private SparseIntArray posMap;
+    private SparseIntArray reversePosMap;
     private RecyclerView recyclerView;
     private RecyclerIndex recyclerIndex;
 
@@ -32,14 +34,18 @@ public class RecyclerIndexBar<T> extends RecyclerView {
     public RecyclerIndexBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         indexList = new ArrayList<>();
-        posMap = new HashMap<>();
-        reversePosMap = new HashMap<>();
+        posMap = new SparseIntArray();
+        reversePosMap = new SparseIntArray();
     }
 
     public void transformData(List<T> list) {
         indexList.clear();
         posMap.clear();
         reversePosMap.clear();
+
+        if (list == null) {
+            return;
+        }
 
         for (int i = 0; i < list.size(); i++) {
             T data = list.get(i);
@@ -55,11 +61,11 @@ public class RecyclerIndexBar<T> extends RecyclerView {
         return indexList;
     }
 
-    public Map<Integer, Integer> getPosMap() {
+    public SparseIntArray getPosMap() {
         return posMap;
     }
 
-    public Map<Integer, Integer> getReversePosMap() {
+    public SparseIntArray getReversePosMap() {
         return reversePosMap;
     }
 
