@@ -184,7 +184,7 @@ public class ProgressButtonLayout extends FrameLayout {
                 if (value == bw) {
                     float translateDistance = buttonWidth / 100f;
                     TranslateAnimation translateAnimation = new TranslateAnimation(-translateDistance, translateDistance, 0, 0);
-                    translateAnimation.setDuration(80);
+                    translateAnimation.setDuration(50);
                     translateAnimation.setRepeatCount(4);
                     translateAnimation.setRepeatMode(Animation.REVERSE);
                     translateAnimation.setAnimationListener(new Animation.AnimationListener() {

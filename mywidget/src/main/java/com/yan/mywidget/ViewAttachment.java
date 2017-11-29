@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 /**
@@ -62,18 +63,28 @@ public class ViewAttachment {
     }
 
     public void hide() {
+        hide(android.R.anim.fade_out);
+    }
+
+    public void hide(int animRes) {
         if (child == null) {
             return;
         }
 
+        child.setAnimation(AnimationUtils.loadAnimation(child.getContext(), animRes));
         child.setVisibility(View.GONE);
     }
 
     public void show() {
+        show(android.R.anim.fade_in);
+    }
+
+    public void show(int animRes) {
         if (child == null) {
             return;
         }
 
+        child.setAnimation(AnimationUtils.loadAnimation(child.getContext(), animRes));
         child.setVisibility(View.VISIBLE);
     }
 
